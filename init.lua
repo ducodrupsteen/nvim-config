@@ -436,29 +436,43 @@ require('lazy').setup({
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
-      -- Enable the following language servers
-      --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
-      --
-      --  Add any additional override configuration in the following tables. Available keys are:
-      --  - cmd (table): Override the default command used to start the server
-      --  - filetypes (table): Override the default list of associated filetypes for the server
-      --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
-      --  - settings (table): Override the default settings passed when initializing the server.
-      --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         pyright = {},
-        tsserver = {},
+        tsserver = {
+          init_options = {
+            plugins = {
+              {
+                name = '@vue/typescript-plugin',
+                location = 'C:\\Program Files\\nodejs\\node_modules\\@vue\\language-server',
+                languages = { 'javascript', 'typescript', 'vue' },
+              },
+            },
+          },
+          filetypes = { 'javascript', 'typescript', 'vue' },
+        },
+        volar = {
+          filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue', 'json' },
+          init_options = {
+            typescript = {
+              tsdk = 'C:\\Program Files\\nodejs\\node_modules\\typescript',
+            },
+          },
+          root_dir = function(pattern)
+            local util = require 'lspconfig.util'
+            local root = util.root_pattern('tsconfig.json', 'jsconfig.json', 'index.html')(pattern)
+
+            return root
+          end,
+        },
         emmet_ls = {},
         intelephense = {
           cmd = { 'intelephense', '--stdio' },
           filetypes = { 'php' },
           root_dir = function(pattern)
             local util = require 'lspconfig.util'
-            local cwd = vim.loop.cwd()
-            local root = util.root_pattern('composer.json', '.git')(pattern)
+            local root = util.root_pattern('composer.json', 'wp-config.php', '.git')(pattern)
 
-            -- prefer cwd if root is a descendant
-            return util.path.is_descendant(cwd, root) and cwd or root
+            return root
           end,
           init_options = {
             licenceKey = './intelephense-license.txt',
