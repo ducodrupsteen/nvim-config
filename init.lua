@@ -34,7 +34,7 @@ vim.opt.clipboard = 'unnamedplus'
 
 -- Enable break indent
 vim.opt.breakindent = true
-
+vim.opt.wrap = false
 -- Save undo history
 vim.opt.undofile = true
 
@@ -60,7 +60,7 @@ vim.opt.splitbelow = true
 --  See `:help 'list'`
 --  and `:help 'listchars'`
 vim.opt.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+vim.opt.listchars = { tab = '  ', trail = '·', nbsp = '␣' }
 
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
@@ -71,9 +71,9 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 15
 
-vim.opt.tabstop = 4
-vim.opt.shiftwidth = 4
-vim.opt.softtabstop = 4
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.softtabstop = 2
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -464,13 +464,30 @@ require('lazy').setup({
             return root
           end,
         },
-        emmet_ls = {},
+        emmet_ls = {
+          filetypes = {
+            'astro',
+            'css',
+            'eruby',
+            'html',
+            'htmldjango',
+            'javascriptreact',
+            'less',
+            'pug',
+            'sass',
+            'scss',
+            'svelte',
+            'typescriptreact',
+            'vue',
+            'php',
+          },
+        },
         intelephense = {
           cmd = { 'intelephense', '--stdio' },
           filetypes = { 'php' },
           root_dir = function(pattern)
             local util = require 'lspconfig.util'
-            local root = util.root_pattern('composer.json', 'wp-config.php', '.git')(pattern)
+            local root = util.root_pattern('wp-config.php', 'composer.json', '.git')(pattern)
 
             return root
           end,
@@ -491,6 +508,15 @@ require('lazy').setup({
               -- diagnostics = { disable = { 'missing-fields' } },
             },
           },
+        },
+        graphql = {
+          filetypes = { 'graphql', 'typescriptreact', 'javascriptreact', 'javascript', 'typescript' },
+          root_dir = function(pattern)
+            local util = require 'lspconfig.util'
+            local root = util.root_pattern '.git'(pattern)
+
+            return root
+          end,
         },
       }
 
@@ -715,7 +741,7 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'c', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc', 'javascript', 'vue', 'php' },
       auto_install = true,
       highlight = {
         enable = true,
@@ -764,6 +790,31 @@ require('lazy').setup({
     'windwp/nvim-autopairs',
     event = 'InsertEnter',
     config = true,
+  },
+  {
+    'romgrk/barbar.nvim',
+    dependencies = {
+      'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
+      'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
+    },
+    init = function()
+      vim.g.barbar_auto_setup = false
+      local map = vim.api.nvim_set_keymap
+      local opts = { noremap = true, silent = true }
+      -- Move to previous/next
+      map('n', '<A-,>', '<Cmd>BufferPrevious<CR>', opts)
+      map('n', '<A-.>', '<Cmd>BufferNext<CR>', opts)
+      -- Re-order to previous/next
+      map('n', '<A-<>', '<Cmd>BufferMovePrevious<CR>', opts)
+      map('n', '<A->>', '<Cmd>BufferMoveNext<CR>', opts)
+      map('n', '<A-c>', '<Cmd>BufferClose<CR>', opts)
+    end,
+    opts = {
+      -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
+      -- animation = true,
+      -- insert_at_start = true,
+      -- …etc.
+    },
   },
 
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
