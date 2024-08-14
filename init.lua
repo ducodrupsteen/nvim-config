@@ -110,7 +110,7 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
-vim.keymap.set('n', '<leader>ft', vim.cmd.Ex, { desc = 'Open file tree' })
+vim.keymap.set('n', '<leader>ft', '<cmd>Oil<CR>', { desc = 'Open file tree' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -191,6 +191,7 @@ require('lazy').setup({
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
       },
+      current_line_blame = true,
     },
     init = function()
       local gitsigns = require 'gitsigns'
@@ -492,18 +493,44 @@ require('lazy').setup({
             'vue',
           },
         },
-        intelephense = {
-          cmd = { 'intelephense', '--stdio' },
+        -- intelephense = {
+        --   cmd = { 'intelephense', '--stdio' },
+        --   filetypes = { 'php' },
+        --   root_dir = function(pattern)
+        --     local util = require 'lspconfig.util'
+        --     local root = util.root_pattern('wp-config.php', 'composer.json', '.git')(pattern)
+        --
+        --     return root
+        --   end,
+        --   init_options = {
+        --     licenceKey = '/home/duco/.config/intelephense-license.txt',
+        --   },
+        --   settings = {
+        --     intelephense = {
+        --       maxSize = 1000000,
+        --       compatibility = {
+        --         preferPsalmPhpstanPrefixedAnnotations = true,
+        --       },
+        --     },
+        --   },
+        -- },
+        phpactor = {
+          cmd = { 'phpactor', 'language-server' },
           filetypes = { 'php' },
+          init_options = {
+            ['language_server_phpstan.enabled'] = true,
+            ['language_server_psalm.enabled'] = false,
+            ['language_server_php_cs_fixer.enabled'] = true,
+            ['language_server_configuration.aut_config'] = false,
+          },
           root_dir = function(pattern)
             local util = require 'lspconfig.util'
-            local root = util.root_pattern('wp-config.php', 'composer.json', '.git')(pattern)
+            local cwd = vim.loop.cwd()
+            local root = util.root_pattern('composer.json', '.git', '.phpactor.json', '.phpactor.yml')(pattern)
 
-            return root
+            -- prefer cwd if root is a descendant
+            return util.path.is_descendant(cwd, root) and cwd or root
           end,
-          init_options = {
-            licenceKey = './intelephense-license.txt',
-          },
         },
         lua_ls = {
           -- cmd = {...},
@@ -824,6 +851,25 @@ require('lazy').setup({
       -- animation = true,
       -- insert_at_start = true,
       -- …etc.
+    },
+  },
+  {
+    'stevearc/oil.nvim',
+    dependencies = { { 'echasnovski/mini.icons', opts = {} } },
+    opts = {
+      default_file_explorer = true,
+      delete_to_trash = true,
+      skip_confirm_for_simple_edits = true,
+      view_options = {
+        show_hidden = true,
+        natural_order = true,
+        is_always_hidden = function(name, _)
+          return name == '..' or name == '.git'
+        end,
+      },
+      win_options = {
+        wrap = true,
+      },
     },
   },
 
