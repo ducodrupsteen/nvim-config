@@ -520,12 +520,7 @@ require('lazy').setup({
         phpactor = {
           cmd = { 'phpactor', 'language-server' },
           filetypes = { 'php' },
-          init_options = {
-            ['language_server_phpstan.enabled'] = true,
-            ['language_server_psalm.enabled'] = false,
-            ['language_server_php_cs_fixer.enabled'] = true,
-            ['language_server_configuration.aut_config'] = false,
-          },
+          init_options = {},
           root_dir = function(pattern)
             local util = require 'lspconfig.util'
             local cwd = vim.loop.cwd()
