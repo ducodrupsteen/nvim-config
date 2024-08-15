@@ -10,6 +10,9 @@ vim.g.nofsync = true
 -- Set to true if you have a Nerd Font installed
 vim.g.have_nerd_font = true
 
+vim.g.netrw_keepdir = 0
+vim.g.netrw_liststyle = 3
+
 -- [[ Setting options ]]
 -- See `:help vim.opt`
 -- NOTE: You can change these options as you wish!
@@ -110,7 +113,7 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
-vim.keymap.set('n', '<leader>ft', '<cmd>Oil<CR>', { desc = 'Open file tree' })
+vim.keymap.set('n', '<leader>ft', vim.cmd.Ex, { desc = 'Open file tree' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -854,21 +857,16 @@ require('lazy').setup({
     },
   },
   {
-    'stevearc/oil.nvim',
-    dependencies = { { 'echasnovski/mini.icons', opts = {} } },
+    'prichrd/netrw.nvim',
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+    },
     opts = {
-      default_file_explorer = true,
-      delete_to_trash = true,
-      skip_confirm_for_simple_edits = true,
-      view_options = {
-        show_hidden = true,
-        natural_order = true,
-        is_always_hidden = function(name, _)
-          return name == '..' or name == '.git'
-        end,
-      },
-      win_options = {
-        wrap = true,
+      use_devicons = true,
+      icons = {
+        symlink = ' ',
+        directory = '',
+        file = '',
       },
     },
   },
