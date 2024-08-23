@@ -10,7 +10,7 @@ vim.g.nofsync = true
 -- Set to true if you have a Nerd Font installed
 vim.g.have_nerd_font = true
 
-vim.g.netrw_keepdir = 0
+-- vim.g.netrw_keepdir = 0
 -- vim.g.netrw_liststyle = 3
 
 -- [[ Setting options ]]
