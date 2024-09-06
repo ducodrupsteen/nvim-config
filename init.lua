@@ -463,7 +463,7 @@ require('lazy').setup({
               },
             },
           },
-          filetypes = { 'javascript', 'typescript', 'vue' },
+          filetypes = { 'javascript', 'typescript', 'vue', 'javascriptreact', 'typescriptreact' },
         },
         volar = {
           filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue', 'json' },
@@ -553,6 +553,7 @@ require('lazy').setup({
             return root
           end,
         },
+        tailwindcss = {},
       }
 
       -- Ensure the servers and tools above are installed
